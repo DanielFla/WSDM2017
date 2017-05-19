@@ -1,0 +1,10 @@
+Install eclipse
+Install maven
+From the eclipse marketplace (Help -> Marketplace):
+	Install maven plugin: Maven Integration for Eclipse...
+	Install efxclipse plugin
+Install Scene Builder
+	http://gluonhq.com/products/scene-builder/
+	(consult this tutorial: http://code.makery.ch/library/javafx-8-tutorial/part1/)
+
+
