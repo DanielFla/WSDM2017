@@ -8,11 +8,12 @@ from lxml import etree
 from tsg.config import PARSED_DIR
 
 
-#Verify structure gotten from crawled files
+
 def extract_content(input_file):
-    main_xpath = '//div[@id="content"]//text()'
-    title_xpath = '//*[@id="doctor-search"]/h1/span[1]/text()'
-    listings_xpath = '//*[@id="search-content"]/div[1]/div[1]/div/div/rs-finder-spotlight-results/div[1]'
+    #Files for FAQ
+    main_xpath = '//div[@id="content-body"]'
+    title_xpath = '// *[@id = "question-title"]//text()'
+    listings_xpath = '//*[@id="question-body"]/text()'
 
     parser = etree.HTMLParser()
     tree = etree.parse(input_file, parser)
@@ -26,7 +27,7 @@ def extract_content(input_file):
         title = ''
 
     try:
-        isbn = tree.xpath('//span[@itemprop="isbn"]/text()')[0]
+        isbn = tree.xpath('//*[@id="question-body"]/text()')[0]
     except IndexError:
         isbn = ''
 
@@ -41,14 +42,14 @@ def parse_text(unparsed):
 
 
 def url_from_filename(input_path):
-    base_url = 'https://www.realself.com/{}/{}'
+    base_url = 'https://www.realself.com{}/{}'
     document_type, midpath, endpath = re.match('([^_]*)_([^_]*)_([^\.]*)',
                                                os.path.basename(input_path)).groups()
-    if document_type == 'author':
-        return base_url.format('pers/hd', '{}/{}'.format(midpath, endpath))
+    if document_type == 'faq':
+        return base_url.format('', '{}/{}'.format(midpath, endpath))
 
-    elif document_type == 'journal':
-        return base_url.format('db/journals', '{}/{}.html'.format(midpath, endpath))
+    elif document_type == 'doctor':
+        return base_url.format('', '{}/{}'.format(midpath, endpath))
 
     elif document_type == 'conference':
         if midpath != 'conf':
