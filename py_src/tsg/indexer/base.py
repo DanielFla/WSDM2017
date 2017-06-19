@@ -17,6 +17,7 @@ def parse_term(term_file, N, qscores, pagerank_scores):
     term_df = pd.read_csv(term_file, index_col='uuid')
 
     # count per document
+    #TODO
     weighted_sum = (term_df*FIELD_WEIGHTS).sum(axis=1)
     log_weights = (np.log10(weighted_sum)+1)
     df_qscores = term_df.apply(lambda row: qscores.loc[row.name].qscore,

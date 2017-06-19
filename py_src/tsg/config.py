@@ -43,9 +43,12 @@ SITE_ROBOTS_TXT = SITE + '/robots.txt'
 #crawl categories
 CATEGORIES = ['doctor', 'faq']
 SITE_CATEGORIES = ['/xmlsitemap-Dr{}.xml','/xmlsitemap-Question{}.xml']
+
+###    indexer
+FIELD_WEIGHTS = [2.5, 2.5, 5, 1]
+
 #TODO
 FIELDS = ['type', 'title', 'isbn', 'content']
-FIELD_WEIGHTS = [2.5, 2.5, 5, 1]
 CSV_HEADER = ','.join(['uuid'] + FIELDS)
 
 
