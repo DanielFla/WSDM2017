@@ -39,16 +39,11 @@ RANKER_K = 100000
 ###    site specific
 SITE = 'https://www.realself.com'
 SITE_ROBOTS_TXT = SITE + '/robots.txt'
+FIELDS = ['type', 'title', 'content']
+FIELD_WEIGHTS = [2.5, 2.5, 1]
+CSV_HEADER = ','.join(['uuid'] + FIELDS)
 
 #crawl categories
 CATEGORIES = ['doctor', 'faq']
 SITE_CATEGORIES = ['/xmlsitemap-Dr{}.xml','/xmlsitemap-Question{}.xml']
-
-###    indexer
-FIELD_WEIGHTS = [2.5, 2.5, 5, 1]
-
-#TODO
-FIELDS = ['type', 'title', 'isbn', 'content']
-CSV_HEADER = ','.join(['uuid'] + FIELDS)
-
 
