@@ -11,14 +11,15 @@ from tsg.config import PARSED_DIR
 
 def extract_content(input_file):
     #Files for FAQ
-    main_xpath = '//div[@id="content-body"]'
-    title_xpath = '// *[@id = "question-title"]//text()'
-    listings_xpath = '//*[@id="question-body"]/text()'
+    main_xpath = '//div[@class="content-body"]//text()'
+    title_xpath = '//meta[@property="og:title"]/@content'
+    listings_xpath = '//h3[@class="content-title"]//text()'
+    #answers_xpath = '//div[contains(@class, "original")]/div/h3[@class="content-title"]//text()'
 
     parser = etree.HTMLParser()
     tree = etree.parse(input_file, parser)
     words = " ".join(tree.xpath(main_xpath))
-    listings_count = len(tree.xpath(listings_xpath))
+    listings_count = len(tree.xpath(listings_xpath)) / 2
     try:
         title = tree.xpath(title_xpath)[0]
     except IndexError:
@@ -26,12 +27,7 @@ def extract_content(input_file):
                       format(input_file))
         title = ''
 
-    try:
-        isbn = tree.xpath('//*[@id="question-body"]/text()')[0]
-    except IndexError:
-        isbn = ''
-
-    return title, words.replace('\xa0', ' '), isbn, listings_count
+    return title, words.replace('\xa0', ' '), listings_count
 
 
 def parse_text(unparsed):
@@ -42,24 +38,17 @@ def parse_text(unparsed):
 
 
 def url_from_filename(input_path):
-    base_url = 'https://www.realself.com{}/{}'
+    base_url = 'https://www.realself.com/{}/{}'
     document_type, midpath, endpath = re.match('([^_]*)_([^_]*)_([^\.]*)',
                                                os.path.basename(input_path)).groups()
     if document_type == 'faq':
-        return base_url.format('', '{}/{}'.format(midpath, endpath))
+        return base_url.format(midpath, endpath)
 
     elif document_type == 'doctor':
-        return base_url.format('', '{}/{}'.format(midpath, endpath))
-
-    elif document_type == 'conference':
-        if midpath != 'conf':
-            return base_url.format('db/conf', '{}/{}.html'.format(midpath, endpath))
-        else:
-            return base_url.format('db/conf', endpath)
-
+        return base_url.format(midpath, endpath)
 
 def parse_document(document_type, input_path):
-    title, words, isbn, listings_count = extract_content(input_path)
+    title, words, listings_count = extract_content(input_path)
     parsed = parse_text(words)
     parsed_title = parse_text(title)
     parsed_url = url_from_filename(input_path)
@@ -67,7 +56,6 @@ def parse_document(document_type, input_path):
 
     data = {
         'listings_count': listings_count,
-        'isbn': isbn,
         'content': parsed,
         'title': parsed_title,
         'url': parsed_url,
