@@ -10,7 +10,10 @@ if TESTING:
     shutil.rmtree(DATA_DIR, ignore_errors=True)
 else:
     # DATA_DIR = os.path.dirname(os.path.abspath(__file__))+'/../data/'
-    DATA_DIR = expanduser("~") + '/tsgdata/'
+    if os.getenv('USER') == 'c':
+        DATA_DIR = expanduser("~") + '/Downloads/WSDM2017/py_src/tsgdata/'
+    else:
+        DATA_DIR = expanduser("~") + '/tsgdata/'
 
 RAW_DIR = DATA_DIR + 'raw/'
 PARSED_DIR = DATA_DIR + 'parsed/'

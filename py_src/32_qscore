@@ -1,0 +1,27 @@
+#!/usr/bin/env python3
+
+import logging
+
+import pandas as pd
+
+from tsg.config import PARSED_DIR, QSCORE_PATH
+from tsg.indexer import qscore
+
+logging.basicConfig(level=logging.INFO)
+
+
+def main():
+    # get page rank
+
+    qscores = qscore.get_scores(PARSED_DIR)
+    # convert to dataframe
+    df = pd.DataFrame.from_dict(qscores, orient='index')
+
+    df.columns = ['qscore']
+    df.index.name = 'uuid'
+
+    df.to_csv(QSCORE_PATH)
+
+
+if __name__ == "__main__":
+    main()

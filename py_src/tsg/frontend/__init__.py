@@ -38,7 +38,7 @@ def requires_auth(f):
 
 
 @app.route('/api/search')
-@requires_auth
+#@requires_auth
 def api_search():
     query = request.args.get('query', '')
     logging.info('Searching for \'{}\''.format(query))
@@ -48,14 +48,14 @@ def api_search():
 
 @app.route('/')
 @app.route('/index.html')
-@requires_auth
+#@requires_auth
 def index():
     'show front page'
     return render_template('index.html')
 
 
 @app.route('/search.html')
-@requires_auth
+#@requires_auth
 def html_search():
     'show results'
     query = request.args.get('query', '')

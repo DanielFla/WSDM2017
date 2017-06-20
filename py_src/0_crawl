@@ -18,10 +18,9 @@ def main():
                     help='Start crawling from given position instead of one')
 
     args = parser.parse_args()
-
-
     crawl_loop(args.category, args.n)
 
+    logging.info('Crawling done.')
 
 
 if __name__ == "__main__":

@@ -15,29 +15,26 @@ def parse_link(doc_link):
     '''
     link_parts = list(re.search('([^/]*)/([^/]*)$', doc_link).groups())
 
-    if "#" in link_parts[1]:
-        link_parts[1] = link_parts[1].split("#")[0]
+    #if "#" in link_parts[1]:
+    #    link_parts[1] = link_parts[1].split("#")[0]
 
-    if "/pers/" in doc_link:
-        category = "author"
-    elif "/conf/" in doc_link:
-        category = "conference"
-    elif "/journals/" in doc_link:
-        category = "journal"
+    if "/find/" in doc_link:
+        category = "doctor"
+    elif "/question/" in doc_link:
+        category = "faq"
     else:
         category = "other"
 
     doc_filename = '{}_{}_{}{}'.format(category,
                                        link_parts[0],
                                        link_parts[1],
-                                       '' if link_parts[1][-5:] == '.html'
-                                       else'.html')
+                                       '.html')
 
     return doc_filename
 
-
 def get_page_outlinks(doc_path):
-    xpath_string = "//div[@class='data']//a/@href"
+    xpath_string = "//a[contains(@href, 'find')]/@href" #doctors
+    xpath_string2 = "//a[contains(@href, 'question')]/@href"#faq
     parser = etree.HTMLParser()
     page_outlinks = []
     page_outfiles = []
@@ -45,13 +42,12 @@ def get_page_outlinks(doc_path):
     if os.path.exists(doc_path):
         with open(doc_path) as doc_f:
             tree = etree.parse(doc_f, parser)
-            page_outlinks = tree.xpath(xpath_string)
+            page_outlinks = tree.xpath(xpath_string) + tree.xpath(xpath_string2)
 
     for link in page_outlinks:
         page_outfiles.append(parse_link(link))
 
     return page_outfiles
-
 
 def build_link_database(html_files_path=RAW_DIR):
     logging.info('Start building link database')

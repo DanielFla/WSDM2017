@@ -4,23 +4,20 @@ import glob
 import logging
 import numpy as np
 from scipy import stats
+from tsg.config import CATEGORIES
 
-
-def get_scores(directory):
+def get_scores(parsed_directory):
     # read all documents, get a distribution for q scores
-    cats = ['conference_overview', 'conference', 'author', 'journal']
-    counts = {cat: [] for cat in cats}
+    counts = {cat: [] for cat in CATEGORIES}
     doc_counts = {}
 
     log_cnt = 0
     logging.info('Start scanning documents for qscore.')
 
-    for filename in glob.glob(directory + '/*.json'):
+    for filename in glob.glob(parsed_directory + '/*.json'):
         with open(filename) as f:
             parsed = json.load(f)
             cat = parsed['type']
-            if cat == 'conference' and parsed['url'][-5:] != '.html':
-                cat = 'conference_overview'
 
             counts[cat].append(parsed['listings_count'])
             doc_counts[parsed['uuid']] = (parsed['listings_count'], cat)
@@ -32,7 +29,7 @@ def get_scores(directory):
     logging.info('Finished scanning documents. Calculate qscores now')
 
     distributions = {cat: (np.array(counts[cat]).mean(),
-                           np.array(counts[cat]).std()) for cat in cats}
+                           np.array(counts[cat]).std()) for cat in CATEGORIES}
 
     log_cnt = 0
 
