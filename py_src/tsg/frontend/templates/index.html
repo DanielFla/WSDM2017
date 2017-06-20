@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Web Seacrh Engine</title>
+   <link rel=stylesheet type=text/css href="{{ url_for('static', filename='style.css') }}"/>
+  <style>
+  div.container {
+    text-align: center;
+      margin:200px 100px 100px 100px;
+      padding: 0px;
+  }
+
+
+    .formsearch{
+      font-family: "arial, sans-serif";
+      width: 80%;
+      margin-bottom: 0;
+      font-size: 24px;
+      border-color: blue;
+      border-radius: 4px;
+    }
+
+      .buttonsearch{
+
+        border-top-right-radius: 0;
+        border-bottom-right-radius: 0;
+        align: right;
+        height: 34px;
+        display: inline-block;
+        padding: 6px 12px;
+        margin-bottom: 0;
+        white-space: nowrap;
+        vertical-align: middle;
+        border-radius: 4px;
+        background:url("{{ url_for('static', filename = 'search.PNG') }}");
+        background-color: #4285F4;
+      }
+
+  </style>
+</head>
+<body>
+  <div class="container">
+  <img src="{{ url_for('static', filename = 'logo.png') }}">
+  <form method="GET" action="{{ url_for('html_search') }}">
+  <br>
+  <input type="text" class="formsearch" name="query" size="80">
+  <button type="submit" class="buttonsearch">Search</button>
+  </form>
+  </div>
+</body>
+</html>

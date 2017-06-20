@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>The search engine - Results</title>
+        <link rel=stylesheet type=text/css href="{{ url_for('static', filename='style.css') }}">
+    </head>
+    <body>
+        <div id="container">
+            <div class="title">
+                <h1 text-align="right"> Web Search Engine</h1>
+            </div>
+          <img src="{{ url_for('static', filename = 'logo.png') }}">
+          <form method="GET" action="{{ url_for('html_search') }}">
+
+          <input type="text" class="formsearch" name="query" value="{{query}}"size="80">
+
+          <input type="submit" value="Search">
+
+          </div>
+
+            <div class="title">
+                <h1>Found {{count}} matching documents</h1>
+            </div>
+
+                <div class = "results">
+                {% for res in results %}
+                      <div class="result">
+                        <span class="head">
+                        <b>{{res.cat}}:</b> <a href="{{res.url}}">{{res.title}}</a>
+                        </span>
+                        <span class="score">{{res.score}}</span>
+                        <p class="preview">{{res.preview|safe}}</p>
+                      </div>
+                {% endfor %}
+                </div>
+                {% if start > 0 %}
+                  <a href="{{ url_for('html_search', query=query, start=start-length, length=length) }}">Last {{length}} results</a>
+                {% endif %}
+
+                  <a href="{{ url_for('html_search', query=query, start=start+length, length=length) }}">Next {{length}} results</a>
+
+        </div>
+    </body>
+</html>
