@@ -10,9 +10,9 @@ from tsg.robots_parser import parse_robots
 
 def crawl_site(url, category):
     logging.info('Downloading URL site {}'.format(url)) # for instance ['https:', '', 'www.realself.com', 'find', 'Australia', 'Kingswood', 'Plastic-Surgeon', 'Angelo-Preketes']
-    url_parts = re.split('/', url)
+    url_parts = re.search('.*com/?([^/]*)/(.*)/([^/]*)$', url).groups()
     filename = '{}_{}_{}{}'.format(category,
-                                   url_parts[-2], #for the doctor case to prevent confusion if two doctors with the same name exist
+                                   url_parts[-2].replace('/','.'), #for the doctor case to prevent confusion if two doctors with the same name exist
                                    url_parts[-1], #last one: name or question 
                                    '.html')
 
@@ -23,7 +23,7 @@ def crawl_site(url, category):
 
     try:
         webpage = get_site(url)
-        with open(doc_path, 'w') as f:
+        with open(doc_path, 'w', encoding='utf-8') as f:
             f.write(webpage.text)
             logging.info('File at {}'.format(doc_path))
     except requests.exceptions.HTTPError:

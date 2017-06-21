@@ -45,7 +45,8 @@ def url_from_filename(input_path):
         return base_url.format(midpath, endpath)
 
     elif document_type == 'doctor':
-        return base_url.format(midpath, endpath)
+        midpath
+        return base_url.format('{}/{}'.format('find', midpath.replace('.', '/')), endpath)
 
 def parse_document(document_type, input_path):
     title, words, listings_count = extract_content(input_path)

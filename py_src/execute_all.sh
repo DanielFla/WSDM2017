@@ -1,8 +1,8 @@
 #!/bin/bash
 
-while true; do
-	[[ $(python 0_crawl doctor | tail -1) == "Crawling done." ]] && break
-done
+#while true; do
+#	[[ $(python 0_crawl doctor | tail -1) == "Crawling done." ]] && break
+#done
 while true; do
 	[[ $(python 0_crawl faq | tail -1) == "Crawling done." ]] && break
 done
