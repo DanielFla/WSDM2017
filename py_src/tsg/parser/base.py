@@ -13,21 +13,25 @@ def extract_content(input_file):
     #Files for FAQ
     main_xpath = '//div[@class="content-body"]//text()'
     title_xpath = '//meta[@property="og:title"]/@content'
+    heading_xpath = '//*[@class="content-title"]/text()'
+    text_xpath = '//div[contains(@class, "original")]//*[@class="content-body-text" or @class="content-body-text user-generated-content"]//text()|//p[@class="content-body-text"]//text()'
     listings_xpath = '//h3[@class="content-title"]//text()'
-    #answers_xpath = '//div[contains(@class, "original")]/div/h3[@class="content-title"]//text()'
 
     parser = etree.HTMLParser()
     tree = etree.parse(input_file, parser)
-    words = " ".join(tree.xpath(main_xpath))
-    listings_count = len(tree.xpath(listings_xpath)) / 2
-    try:
-        title = tree.xpath(title_xpath)[0]
-    except IndexError:
-        logging.error('File {} doesn\'t seem to have a title'.
-                      format(input_file))
-        title = ''
+    parsed_zones = {}
+    
+    parsed_zones['title'] = tree.xpath(title_xpath)[0]
+    parsed_zones['words'] = " ".join(tree.xpath(main_xpath))
+    parsed_zones['heading'] = ' '.join(tree.xpath(heading_xpath)[1:])
+    parsed_zones['text'] = ' '.join(tree.xpath(text_xpath)
 
-    return title, words.replace('\xa0', ' '), listings_count
+    for key in parsed_zones:
+        parsed_zones[key] = parse_text(parsed_zones[key].replace('\xa0', ' '))
+
+    listings_count = len(tree.xpath(listings_xpath)) / 2
+
+    return parsed_zones, listings_count
 
 
 def parse_text(unparsed):
@@ -49,16 +53,16 @@ def url_from_filename(input_path):
         return base_url.format('{}/{}'.format('find', midpath.replace('.', '/')), endpath)
 
 def parse_document(document_type, input_path):
-    title, words, listings_count = extract_content(input_path)
-    parsed = parse_text(words)
-    parsed_title = parse_text(title)
+    parsed_zones, listings_count = extract_content(input_path)
     parsed_url = url_from_filename(input_path)
     uuid = os.path.splitext(os.path.basename(input_path))[0]
 
     data = {
         'listings_count': listings_count,
-        'content': parsed,
-        'title': parsed_title,
+        'content': parsed_zones['words'],
+        'title': parsed_zones['title'], #doctors name, question
+        'heading': parsed_zones['heading'], #answer titles(questions), review titles(doctor)
+        'text': parsed_zones['text'], #answer text(questions), review text(doctor)
         'url': parsed_url,
         'uuid': uuid,
         'type': document_type

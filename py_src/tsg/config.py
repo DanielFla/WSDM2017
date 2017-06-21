@@ -11,7 +11,7 @@ if TESTING:
 else:
     # DATA_DIR = os.path.dirname(os.path.abspath(__file__))+'/../data/'
     if os.getenv('USER') == 'c':
-        DATA_DIR = expanduser("~") + '/Downloads/WSDM2017/py_src/tsgdata/'
+        DATA_DIR = expanduser("~") + '/Downloads/uni/WSDM2017/py_src/tsgdata/'
     else:
         DATA_DIR = expanduser("~") + '/tsgdata/'
 
@@ -42,8 +42,8 @@ RANKER_K = 100000
 ###    site specific
 SITE = 'https://www.realself.com'
 SITE_ROBOTS_TXT = SITE + '/robots.txt'
-FIELDS = ['type', 'title', 'content']
-FIELD_WEIGHTS = [2.5, 2.5, 1]
+FIELDS = ['type', 'title', 'content', 'heading', 'text']
+FIELD_WEIGHTS = [2.5, 2.5, 1, 1, 1]
 CSV_HEADER = ','.join(['uuid'] + FIELDS)
 
 #crawl categories
