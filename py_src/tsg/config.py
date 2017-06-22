@@ -17,7 +17,7 @@ else:
 
 RAW_DIR = DATA_DIR + 'raw/'
 PARSED_DIR = DATA_DIR + 'parsed/'
-INTERMEDIATE_DIR = DATA_DIR + 'intermediate2/'
+INTERMEDIATE_DIR = DATA_DIR + 'intermediate/'
 
 # create necessary file structure
 os.makedirs(RAW_DIR, exist_ok=True)
@@ -51,3 +51,4 @@ CATEGORIES = ['doctor', 'faq']
 SITE_CATEGORIES = ['/xmlsitemap-Dr{}.xml','/xmlsitemap-Question{}.xml']
 
 SPECIFIER_SEPARATOR = ':'
+FILTER_KEY = 'filter'

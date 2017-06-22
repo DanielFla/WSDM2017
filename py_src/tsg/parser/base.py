@@ -12,10 +12,10 @@ from tsg.config import PARSED_DIR
 def extract_content(input_file):
     #Files for FAQ
     main_xpath = '//div[@class="content-body"]//text()'
-    title_xpath = '//meta[@property="og:title"]/@content'
-    heading_xpath = '//*[@class="content-title"]/text()'
-    text_xpath = '//div[contains(@class, "original")]//*[@class="content-body-text" or @class="content-body-text user-generated-content"]//text()|//p[@class="content-body-text"]//text()'
-    listings_xpath = '//h3[@class="content-title"]//text()'
+    title_xpath = '//meta[@property="og:title"]/@content' #question or doctors name
+    heading_xpath = '//*[@class="content-title"]/text()' #answer titles or review titles  
+    text_xpath = '//div[contains(@class, "original")]//*[@class="content-body-text" or @class="content-body-text user-generated-content"]//text()|//p[@class="content-body-text"]//text()' #answer text or review text
+    listings_xpath = '//h3[@class="content-title"]//text()' #number of answers or reviews
 
     parser = etree.HTMLParser()
     tree = etree.parse(input_file, parser)
