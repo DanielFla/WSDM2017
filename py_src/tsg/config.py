@@ -17,12 +17,12 @@ else:
 
 RAW_DIR = DATA_DIR + 'raw/'
 PARSED_DIR = DATA_DIR + 'parsed/'
-INTERMEDIATE_DIR = DATA_DIR + 'intermediate/'
+INTERMEDIATE_DIR = DATA_DIR + 'intermediate2/'
 
 # create necessary file structure
 os.makedirs(RAW_DIR, exist_ok=True)
-os.makedirs(PARSED_DIR, exist_ok=True)
-os.makedirs(INTERMEDIATE_DIR, exist_ok=True)
+#os.makedirs(PARSED_DIR, exist_ok=True)
+#os.makedirs(INTERMEDIATE_DIR, exist_ok=True)
 
 DICTIONARY_PATH = DATA_DIR + 'dictionary.dat'
 PAGERANK_PATH = DATA_DIR + 'pagerank.csv'
@@ -50,3 +50,4 @@ CSV_HEADER = ','.join(['uuid'] + FIELDS)
 CATEGORIES = ['doctor', 'faq']
 SITE_CATEGORIES = ['/xmlsitemap-Dr{}.xml','/xmlsitemap-Question{}.xml']
 
+SPECIFIER_SEPARATOR = ':'

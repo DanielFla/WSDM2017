@@ -10,7 +10,13 @@ from tsg.robots_parser import parse_robots
 
 def crawl_site(url, category):
     logging.info('Downloading URL site {}'.format(url)) # for instance ['https:', '', 'www.realself.com', 'find', 'Australia', 'Kingswood', 'Plastic-Surgeon', 'Angelo-Preketes']
-    url_parts = re.search('.*com/?([^/]*)/(.*)/([^/]*)$', url).groups()
+    try:
+        url_parts = re.search('.*com/?([^/]*)/(.*)/([^/]*)$', url).groups()
+    except AttributeError:
+        url_parts = re.search('.*com/(questio?n?)([^/]*)$', url).groups()
+        url_parts = ('question', url_parts[1])
+        
+
     filename = '{}_{}_{}{}'.format(category,
                                    url_parts[-2].replace('/','.'), #for the doctor case to prevent confusion if two doctors with the same name exist
                                    url_parts[-1], #last one: name or question 

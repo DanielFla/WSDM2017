@@ -13,8 +13,8 @@ logging.basicConfig(level=logging.INFO)
 
 
 def main():
-    shutil.rmtree(INTERMEDIATE_DIR)
-    os.mkdir(INTERMEDIATE_DIR)
+#    shutil.rmtree(INTERMEDIATE_DIR)
+#    os.mkdir(INTERMEDIATE_DIR)
 
     files = glob.glob(PARSED_DIR + '*.json')
     for f in files:

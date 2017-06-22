@@ -7,18 +7,22 @@ import json
 import pandas as pd
 import numpy as np
 
-from tsg.config import FIELD_WEIGHTS
+from tsg.config import FIELD_WEIGHTS, FIELDS
 
 
-def parse_term(term_file, N, qscores, pagerank_scores):
+def parse_term(term_file, N, qscores, pagerank_scores, field='all'):
     '''
     N: number of documents in total
     '''
-    term_df = pd.read_csv(term_file, index_col='uuid')
+    field_indexes = np.arange(len(FIELD_WEIGHTS) + 1)
+    weights = FIELD_WEIGHTS
+    if field != 'all':
+        field_indexes = [0, np.where(np.asarray(FIELDS), field)[0][0]]
+        weights = [FIELD_WEIGHTS[w] for w in field_indexes]
 
+    term_df = pd.read_csv(term_file, index_col='uuid', usecols=field_indexes)
     # count per document
-    #TODO
-    weighted_sum = (term_df*FIELD_WEIGHTS).sum(axis=1)
+    weighted_sum = (term_df*weights).sum(axis=1)
     log_weights = (np.log10(weighted_sum)+1)
     df_qscores = term_df.apply(lambda row: qscores.loc[row.name].qscore,
                                 axis=1)
@@ -64,20 +68,25 @@ def create_index(intermediate_dir,
     files.sort()
 
     compiled_termname_re = re.compile('([^/]*).csv')
-    with open(dictionary_path, 'w') as dictionary_file:  # deletes dictionary!
-        for term_file in files:
-            term = compiled_termname_re.search(term_file).groups()[0]
-            indexed_line = parse_term(term_file,
-                                      num_documents,
-                                      qscores,
-                                      pagerank_scores)
+    for field in FIELDS:
+        if field == 'type': field = 'all'
+        with open('{}{}{}'.format(dictionary_path, '_', field), 'w') as dictionary_file:  # deletes dictionary!
+            logging.info('Start dictionary {}'.format(field))
 
-            dictionary_file.write('{} {}\n'.format(term, indexed_line))
-            logging.info('Indexed term {}'.format(term))
+            for term_file in files:
+                term = compiled_termname_re.search(term_file).groups()[0]
+                indexed_line = parse_term(term_file,
+                                          num_documents,
+                                          qscores,
+                                          pagerank_scores,
+                                          field=field)
 
-            if log_cnt % 1000000 == 0:
-                logging.info('created index-line for {} files'.format(log_cnt))
-            log_cnt += 1
+                dictionary_file.write('{} {}\n'.format(term, indexed_line))
+                logging.info('Indexed term {}'.format(term))
+
+                if log_cnt % 1000000 == 0:
+                    logging.info('created index-line for {} files'.format(log_cnt))
+                log_cnt += 1
 
     create_indexinfo(num_documents, indexinfo_path)
 

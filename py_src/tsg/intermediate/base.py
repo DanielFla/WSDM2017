@@ -37,13 +37,17 @@ def generate_intermediate(file_uuid):
         term_filename = '{}{}.csv'.format(INTERMEDIATE_DIR, term)
         needs_header = not os.path.isfile(term_filename)
 
-        with open(term_filename, 'a') as f:
-            if needs_header:
-                logging.info('Creating new index file {}'.format(term_filename))
-                f.write(CSV_HEADER+'\n')
+        try:
+            with open(term_filename, 'a') as f:
+                if needs_header:
+                    logging.info('Creating new index file {}'.format(term_filename))
+                    f.write(CSV_HEADER+'\n')
 
-            csv_line = '{},{}\n'.format(
-                file_uuid,
-                ','.join([str(occurrences[field]) for field in FIELDS]))
+                csv_line = '{},{}\n'.format(
+                    file_uuid,
+                    ','.join([str(occurrences[field]) for field in FIELDS]))
 
-            f.write(csv_line)
+                f.write(csv_line)
+        except OSError:
+            logging.info('Skipping file {}'.format(term_filename))
+            pass

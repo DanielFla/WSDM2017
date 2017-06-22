@@ -20,8 +20,7 @@ def get_dictionary_term_list(term,index_dictionary_path=DICTIONARY_PATH):
 
             i = 0
             try:
-                for match in re.finditer('(?:,|^)(.*?):([0-9]+\.[0-9]*)',
-                    documents):
+                for match in re.finditer('(?:,|^)(.*?):([0-9]+\.[0-9]*)', documents):
                     uuid, weight = match.groups()
                     document_list[uuid] = float(weight)
                     if i > RANKER_K:

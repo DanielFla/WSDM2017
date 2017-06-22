@@ -21,10 +21,14 @@ def extract_content(input_file):
     tree = etree.parse(input_file, parser)
     parsed_zones = {}
     
+    if not tree.getroot():
+        logging.error('File {} seems to be empty'.format(input_file))
+        raise AssertionError
+
     parsed_zones['title'] = tree.xpath(title_xpath)[0]
     parsed_zones['words'] = " ".join(tree.xpath(main_xpath))
     parsed_zones['heading'] = ' '.join(tree.xpath(heading_xpath)[1:])
-    parsed_zones['text'] = ' '.join(tree.xpath(text_xpath)
+    parsed_zones['text'] = ' '.join(tree.xpath(text_xpath))
 
     for key in parsed_zones:
         parsed_zones[key] = parse_text(parsed_zones[key].replace('\xa0', ' '))
@@ -53,7 +57,11 @@ def url_from_filename(input_path):
         return base_url.format('{}/{}'.format('find', midpath.replace('.', '/')), endpath)
 
 def parse_document(document_type, input_path):
-    parsed_zones, listings_count = extract_content(input_path)
+    try:
+        parsed_zones, listings_count = extract_content(input_path)
+    except AssertionError:
+        return
+
     parsed_url = url_from_filename(input_path)
     uuid = os.path.splitext(os.path.basename(input_path))[0]
 

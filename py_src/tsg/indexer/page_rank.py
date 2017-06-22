@@ -42,7 +42,11 @@ def get_page_outlinks(doc_path):
     if os.path.exists(doc_path):
         with open(doc_path) as doc_f:
             tree = etree.parse(doc_f, parser)
-            page_outlinks = tree.xpath(xpath_string) + tree.xpath(xpath_string2)
+            try:
+                page_outlinks = tree.xpath(xpath_string) + tree.xpath(xpath_string2)
+            except AssertionError:
+                os.remove(doc_path)
+                return page_outfiles
 
     for link in page_outlinks:
         page_outfiles.append(parse_link(link))

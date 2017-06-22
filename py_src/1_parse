@@ -14,8 +14,8 @@ logging.basicConfig(level=logging.INFO)
 
 def main():
 
-    shutil.rmtree(PARSED_DIR)
-    os.mkdir(PARSED_DIR)
+#    shutil.rmtree(PARSED_DIR)
+#    os.mkdir(PARSED_DIR)
 
     files = glob.glob(RAW_DIR + '*.html')
     for f in files:
