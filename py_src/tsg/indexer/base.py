@@ -88,7 +88,7 @@ def create_index(intermediate_dir,
                     continue
 
                 dictionary_file.write('{} {}\n'.format(term, indexed_line))
-                logging.info('Indexed term {}'.format(term))
+                #logging.info('Indexed term {}'.format(term))
 
                 if log_cnt % 1000000 == 0:
                     logging.info('created index-line for {} files'.format(log_cnt))
