@@ -15,7 +15,7 @@ def extract_content(input_file):
     title_xpath = '//meta[@property="og:title"]/@content' #question or doctors name
     heading_xpath = '//*[@class="content-title"]/text()' #answer titles or review titles  
     text_xpath = '//div[contains(@class, "original")]//*[@class="content-body-text" or @class="content-body-text user-generated-content"]//text()|//p[@class="content-body-text"]//text()' #answer text or review text
-    rating_xpath = '//meta[contains(@content, "UserLikes")]/@content'
+    rating_xpath = '//meta[contains(@content, "UserLikes")]/@content|//*[contains(@class, "link-secondary none align-middle")]/text()'
     listings_xpath = '//h3[@class="content-title"]//text()' #number of answers or reviews
 
     parser = etree.HTMLParser()
@@ -30,6 +30,7 @@ def extract_content(input_file):
     parsed_zones['words'] = " ".join(tree.xpath(main_xpath))
     parsed_zones['heading'] = ' '.join(tree.xpath(heading_xpath)[1:])
     parsed_zones['text'] = ' '.join(tree.xpath(text_xpath))
+    parsed_zones['ratings'] = tree.xpath(ratings_xpath)
 
     for key in parsed_zones:
         parsed_zones[key] = parse_text(parsed_zones[key].replace('\xa0', ' '))
