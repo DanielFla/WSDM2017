@@ -3,40 +3,52 @@ import re
 import logging
 from tsg.config import DICTIONARY_PATH, RANKER_K
 from tsg.ranker.hasher import hash_index_terms
+from tsg.parser.base import parse_text
 
 
-def get_dictionary_term_list(term,index_dictionary_path=DICTIONARY_PATH):
-
+def get_dictionary_term_list(term,index_dictionary_path=DICTIONARY_PATH, field=None):
     if not get_dictionary_term_list.index_hash:
         get_dictionary_term_list.index_hash = hash_index_terms(index_dictionary_path)
 
     document_list = {}
     with open(index_dictionary_path) as dict_f:
+        line_term = ''
         try:
             dict_f.seek(get_dictionary_term_list.index_hash[term][0])
             line_term, documents = dict_f.readline().replace('\n', '').split(' ')
-
             assert term == line_term
 
             i = 0
             try:
                 for match in re.finditer('(?:,|^)(.*?):([0-9]+\.[0-9]*)', documents):
                     uuid, weight = match.groups()
+
+                    if field:
+                        uuid_1 = uuid.split('_')[0]
+                        if field == 'faq' and 'doctor' == uuid_1:
+                            continue
+                        elif field != 'faq' and 'faq' == uuid_1:
+                            continue
+                        elif field != 'doctor' and field != 'faq' and parse_text(field) != parse_text(uuid.split('_')[-2].split('.')[-1]): #field is specialisation
+
+                            continue
+
                     document_list[uuid] = float(weight)
                     if i > RANKER_K:
                         raise StopIteration
                     i += 1
             except StopIteration:
+                logging.warn('Exception')
                 pass
 
         except Exception as e:
-            logging.warn('Surpressed exception: {}'.format(e))
+            logging.warn('Surpressed exception: {}. Nothing found in dictionary.'.format(e))
             pass
 
     return document_list
 get_dictionary_term_list.index_hash = None
 
-def and_score_calc(query_terms, index_dictionary_path= DICTIONARY_PATH):
+def and_score_calc(query_terms, index_dictionary_path= DICTIONARY_PATH, field=None):
 
     common_doc_keys = set()
     terms_documents = {}
@@ -45,7 +57,7 @@ def and_score_calc(query_terms, index_dictionary_path= DICTIONARY_PATH):
     MaxLength = 0
 
     for term in query_terms:
-        terms_documents[term] = get_dictionary_term_list(term, index_dictionary_path)
+        terms_documents[term] = get_dictionary_term_list(term, index_dictionary_path, field)
         if len(common_doc_keys) == 0:
             common_doc_keys = terms_documents[term].keys()
         else:
@@ -56,8 +68,7 @@ def and_score_calc(query_terms, index_dictionary_path= DICTIONARY_PATH):
             if key in terms_documents[term]:
                 if key in and_scored_docs:
                     and_scored_docs[key] += float(terms_documents[term][key])
-                else:
-                    and_scored_docs[key] = float(terms_documents[term][key])
+                else: and_scored_docs[key] = float(terms_documents[term][key])
 
                 if key in doc_length:
                     doc_length[key] += float(terms_documents[term][key])
@@ -76,12 +87,12 @@ def and_score_calc(query_terms, index_dictionary_path= DICTIONARY_PATH):
     return and_scored_docs
     # return sorted(and_scored_docs.items(), key= operator.itemgetter(1), reverse= True)
 
-def or_score_calc(query_terms, index_dictionary_path=DICTIONARY_PATH):
+def or_score_calc(query_terms, index_dictionary_path=DICTIONARY_PATH, field=None):
 
     or_scored_docs = {}
     doc_length = {} # Holds score^2 for Length normalization at end
     for term in query_terms:
-        term_documents = get_dictionary_term_list(term, index_dictionary_path)
+        term_documents = get_dictionary_term_list(term, index_dictionary_path, field)
         for key, value in term_documents.items():
             if key in or_scored_docs:
                 or_scored_docs[key] += float(value)
@@ -121,7 +132,7 @@ def combine_and_or_scores(and_dict, or_dict):
     return combined_and_or_docs
 
 def rank(query_terms, index_dictionary_path=DICTIONARY_PATH,
-    rank_method = "and_or_extended"):
+    rank_method = "and_or_extended", field=None):
     '''
     Ranker takes a query and a dictionary path to calculates the score
     and retrieved a list of docs ordered by score and doc_id as
@@ -132,14 +143,14 @@ def rank(query_terms, index_dictionary_path=DICTIONARY_PATH,
     sorted_docs = []
 
     if rank_method == "and":
-        and_scored_docs = and_score_calc(query_terms, index_dictionary_path)
+        and_scored_docs = and_score_calc(query_terms, index_dictionary_path, field)
         sorted_docs = sorted(and_scored_docs.items(), key = operator.itemgetter(1), reverse = True)
     elif rank_method == "or":
-        or_scored_docs = or_score_calc(query_terms, index_dictionary_path)
+        or_scored_docs = or_score_calc(query_terms, index_dictionary_path, field)
         sorted_docs = sorted(or_scored_docs.items(), key = operator.itemgetter(1), reverse = True)
     elif rank_method == "and_or_extended":
-        and_scored_docs = and_score_calc(query_terms, index_dictionary_path)
-        or_scored_docs = or_score_calc(query_terms, index_dictionary_path)
+        and_scored_docs = and_score_calc(query_terms, index_dictionary_path, field)
+        or_scored_docs = or_score_calc(query_terms, index_dictionary_path, field)
         sorted_docs = combine_and_or_scores(and_scored_docs, or_scored_docs)
 
     return sorted_docs

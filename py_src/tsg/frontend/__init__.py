@@ -62,7 +62,7 @@ def html_search():
     start = int(request.args.get('start', '0'))
     length = int(request.args.get('length', '20'))
 
-    logging.info('Searching for \'{}\''.format(query))
+    #logging.info('Searching for \'{}\''.format(query))
     results = search(query, DICTIONARY_PATH, INDEXINFO_PATH)
 
     detailed_list = generate_detailed_list(results, query, start, length)

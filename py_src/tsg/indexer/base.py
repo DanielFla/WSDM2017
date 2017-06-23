@@ -24,10 +24,13 @@ def parse_term(term_file, N, qscores, pagerank_scores, field='all'):
     # count per document
     weighted_sum = (term_df*weights).sum(axis=1)
     log_weights = (np.log10(weighted_sum)+1)
-    df_qscores = term_df.apply(lambda row: qscores.loc[row.name].qscore,
-                                axis=1)
-    df_pagerank_scores = term_df.apply(lambda row: pagerank_scores.loc[row.name].pagerank_score,
-                                       axis=1)
+    try:
+        row = ''
+        df_qscores = term_df.apply(lambda row: qscores.loc[row.name].qscore, axis=1)
+        df_pagerank_scores = term_df.apply(lambda row: pagerank_scores.loc[row.name].pagerank_score, axis=1)
+    except KeyError:
+        logging.info('Problems with term {} and row {}'.format(term_file, row))
+        raise Exception
 
     # log page rank scores and move minimum to 1
     df_pagerank_scores = np.log10(df_pagerank_scores)
@@ -75,11 +78,14 @@ def create_index(intermediate_dir,
 
             for term_file in files:
                 term = compiled_termname_re.search(term_file).groups()[0]
-                indexed_line = parse_term(term_file,
+                try:
+                    indexed_line = parse_term(term_file,
                                           num_documents,
                                           qscores,
                                           pagerank_scores,
                                           field=field)
+                except Exception:
+                    continue
 
                 dictionary_file.write('{} {}\n'.format(term, indexed_line))
                 logging.info('Indexed term {}'.format(term))

@@ -30,6 +30,7 @@ def generate_intermediate(file_uuid):
     '''
     filename is same as uuid
     '''
+    logging.info('Indexing file {}'.format(file_uuid))
 
     wordlist = process_document('{}{}.json'.format(PARSED_DIR, file_uuid))
 
@@ -40,7 +41,7 @@ def generate_intermediate(file_uuid):
         try:
             with open(term_filename, 'a') as f:
                 if needs_header:
-                    logging.info('Creating new index file {}'.format(term_filename))
+                    #logging.info('Creating new index file {}'.format(term_filename))
                     f.write(CSV_HEADER+'\n')
 
                 csv_line = '{},{}\n'.format(
@@ -48,6 +49,6 @@ def generate_intermediate(file_uuid):
                     ','.join([str(occurrences[field]) for field in FIELDS]))
 
                 f.write(csv_line)
-        except OSError:
-            logging.info('Skipping file {}'.format(term_filename))
+        except OSError as e:
+            logging.info('Skipping file {}: {}'.format(term_filename, e))
             pass
