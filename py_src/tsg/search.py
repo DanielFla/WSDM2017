@@ -27,7 +27,6 @@ def search(searchphrase, dictionary_path, indexinfo_path):
             dict_specifier = field
             field = None
 
-    print(zone, field)
     dictionary_path = '{}{}{}'.format(dictionary_path, '_', dict_specifier)
 
     parsed_query = parse_text(searchphrase).split(' ')
