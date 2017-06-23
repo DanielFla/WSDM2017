@@ -17,7 +17,7 @@ def parse_term(term_file, N, qscores, pagerank_scores, field='all'):
     field_indexes = np.arange(len(FIELD_WEIGHTS) + 1)
     weights = FIELD_WEIGHTS
     if field != 'all':
-        field_indexes = [0, np.where(np.asarray(FIELDS), field)[0][0]]
+        field_indexes = [0, np.where(np.asarray(FIELDS) == field)[0][0]]
         weights = [FIELD_WEIGHTS[w] for w in field_indexes]
 
     term_df = pd.read_csv(term_file, index_col='uuid', usecols=field_indexes)
@@ -27,10 +27,12 @@ def parse_term(term_file, N, qscores, pagerank_scores, field='all'):
     try:
         row = ''
         df_qscores = term_df.apply(lambda row: qscores.loc[row.name].qscore, axis=1)
+
         df_pagerank_scores = term_df.apply(lambda row: pagerank_scores.loc[row.name].pagerank_score, axis=1)
     except KeyError:
         logging.info('Problems with term {} and row {}'.format(term_file, row))
-        raise Exception
+        #raise Exception
+        pass
 
     # log page rank scores and move minimum to 1
     df_pagerank_scores = np.log10(df_pagerank_scores)
@@ -47,6 +49,7 @@ def parse_term(term_file, N, qscores, pagerank_scores, field='all'):
     pairs = term_df.apply(lambda row: '{}:{}'.
                           format(row.name, row['tf-idf']),
                           axis=1)
+    print(pairs)
     return ",".join(pairs)
 
 
@@ -72,7 +75,9 @@ def create_index(intermediate_dir,
 
     compiled_termname_re = re.compile('([^/]*).csv')
     for field in FIELDS:
-        if field == 'type': field = 'all'
+        if field == 'type': 
+            continue
+            field = 'all'
         with open('{}{}{}'.format(dictionary_path, '_', field), 'w') as dictionary_file:  # deletes dictionary!
             logging.info('Start dictionary {}'.format(field))
 
