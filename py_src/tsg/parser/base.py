@@ -15,6 +15,7 @@ def extract_content(input_file):
     title_xpath = '//meta[@property="og:title"]/@content' #question or doctors name
     heading_xpath = '//*[@class="content-title"]/text()' #answer titles or review titles  
     text_xpath = '//div[contains(@class, "original")]//*[@class="content-body-text" or @class="content-body-text user-generated-content"]//text()|//p[@class="content-body-text"]//text()' #answer text or review text
+    rating_xpath = '//meta[contains(@content, "UserLikes")]/@content'
     listings_xpath = '//h3[@class="content-title"]//text()' #number of answers or reviews
 
     parser = etree.HTMLParser()

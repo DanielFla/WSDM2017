@@ -30,7 +30,7 @@ def generate_intermediate(file_uuid):
     '''
     filename is same as uuid
     '''
-    logging.info('Indexing file {}'.format(file_uuid))
+    #logging.info('Indexing file {}'.format(file_uuid))
 
     wordlist = process_document('{}{}.json'.format(PARSED_DIR, file_uuid))
 
