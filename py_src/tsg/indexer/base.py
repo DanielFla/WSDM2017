@@ -17,10 +17,11 @@ def parse_term(term_file, N, qscores, pagerank_scores, field='all'):
     field_indexes = np.arange(len(FIELD_WEIGHTS) + 1)
     weights = FIELD_WEIGHTS
     if field != 'all':
-        field_indexes = [0, np.where(np.asarray(FIELDS) == field)[0][0]]
+        field_indexes = [np.where(np.asarray(FIELDS) == field)[0][0]]
         weights = [FIELD_WEIGHTS[w] for w in field_indexes]
 
-    term_df = pd.read_csv(term_file, index_col='uuid', usecols=field_indexes)
+    term_df = pd.read_csv(term_file, index_col='uuid', usecols=[0] + field_indexes)
+
     # count per document
     weighted_sum = (term_df*weights).sum(axis=1)
     log_weights = (np.log10(weighted_sum)+1)
@@ -49,7 +50,6 @@ def parse_term(term_file, N, qscores, pagerank_scores, field='all'):
     pairs = term_df.apply(lambda row: '{}:{}'.
                           format(row.name, row['tf-idf']),
                           axis=1)
-    print(pairs)
     return ",".join(pairs)
 
 
@@ -83,14 +83,14 @@ def create_index(intermediate_dir,
 
             for term_file in files:
                 term = compiled_termname_re.search(term_file).groups()[0]
-                try:
-                    indexed_line = parse_term(term_file,
+#                try:
+                indexed_line = parse_term(term_file,
                                           num_documents,
                                           qscores,
                                           pagerank_scores,
                                           field=field)
-                except Exception:
-                    continue
+#                except Exception:
+#                    continue
 
                 dictionary_file.write('{} {}\n'.format(term, indexed_line))
                 #logging.info('Indexed term {}'.format(term))
