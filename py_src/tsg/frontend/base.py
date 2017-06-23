@@ -22,7 +22,7 @@ def _generate_detailed_item(doc_id, doc_weight, search_terms):
         return {
             'title': detailed_data['title'],
             'url': detailed_data['url'],
-            'cat': detailed_data['type'],
+            'cat': detailed_data['type'].replace('faq', 'QUESTION').replace('doctor', 'DOCTOR'),
             'score': doc_weight,
             'preview': preview
         }
