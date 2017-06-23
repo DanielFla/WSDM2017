@@ -30,7 +30,7 @@ def extract_content(input_file):
     parsed_zones['words'] = " ".join(tree.xpath(main_xpath))
     parsed_zones['heading'] = ' '.join(tree.xpath(heading_xpath)[1:])
     parsed_zones['text'] = ' '.join(tree.xpath(text_xpath))
-    parsed_zones['ratings'] = tree.xpath(ratings_xpath)
+    #parsed_zones['ratings'] = tree.xpath(ratings_xpath)
 
     for key in parsed_zones:
         parsed_zones[key] = parse_text(parsed_zones[key].replace('\xa0', ' '))

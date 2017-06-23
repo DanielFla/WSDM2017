@@ -15,9 +15,9 @@ else:
     else:
         DATA_DIR = expanduser("~") + '/tsgdata/'
 
-RAW_DIR = DATA_DIR + 'raw/'
-PARSED_DIR = DATA_DIR + 'parsed/'
-INTERMEDIATE_DIR = DATA_DIR + 'intermediate/'
+RAW_DIR = DATA_DIR + 'raw2/'
+PARSED_DIR = DATA_DIR + 'parsed2/'
+INTERMEDIATE_DIR = DATA_DIR + 'intermediate2/'
 
 # create necessary file structure
 os.makedirs(RAW_DIR, exist_ok=True)
